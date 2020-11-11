@@ -5,4 +5,3 @@ class Student:
     def info(self):
         name=self.name
 s1=Student([1,2,3,4,5,6])
-print(s1.name)
