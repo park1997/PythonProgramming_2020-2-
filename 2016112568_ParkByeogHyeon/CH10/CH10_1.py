@@ -1,16 +1,13 @@
 import pandas as pd
 class Student:
-    def __init__(self,informa):
-        self.name, self.number, self.department, self.math, self.english, self.korean=informa
+    def __init__(self,information):
+        self.name, self.number, self.department, self.math, self.english, self.korean=information
     def show_info(self):
         return "{}\t{}\t{}".format(self.name,self.number,self.department)
-
     def calc_sum(self):
         return float(self.math)+float(self.english)+float(self.korean)
-
     def calc_aver(self):
         return self.calc_sum()/3
-
     def calc_grade(self,m_index,e_index,k_index):
         math_index=m_index
         english_index=e_index
@@ -54,9 +51,6 @@ result_2=sorted(students,key=lambda y: y.name)
 math_scores=[int(i.math) for i in result_2]
 english_scores=[int(i.english) for i in result_2]
 korean_scores=[int(i.korean) for i in result_2]
-print(math_scores)
-print(sorted(english_scores))
-print(korean_scores)
 print("{:6}\t{:8}\t{:8}\t{:4}\t{:4}\t{:4}".format("No","이름","학번","수학","영어","국어"))
 for i,j in enumerate(result_2):
     real_grade=j.calc_grade(sorted(math_scores).index(int(j.math)),sorted(english_scores).index(int(j.english)),sorted(korean_scores).index(int(j.korean)))
