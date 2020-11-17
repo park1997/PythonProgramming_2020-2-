@@ -49,7 +49,7 @@ class Student:
         rank_math = math_datas.index(self.math)+1
         rank_english = english_datas.index(self.english)+1
         rank_korean = korean_datas.index(self.korean)+1
-
+        
         # grade 계산
         grade = []
         for rank in [rank_math, rank_english, rank_korean] :
