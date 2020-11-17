@@ -49,7 +49,6 @@ result_2=sorted(students,key=lambda y: y.name)
 math_scores=[int(i.math) for i in result_2]
 english_scores=[int(i.english) for i in result_2]
 korean_scores=[int(i.korean) for i in result_2]
-print(sorted(math_scores))
 print("{:6}\t{:8}\t{:8}\t{:4}\t{:4}\t{:4}".format("No","이름","학번","수학","영어","국어"))
 for i,j in enumerate(result_2):
     real_grade=j.calc_grade(sorted(math_scores,reverse=True).index(int(j.math)),sorted(english_scores,reverse=True).index(int(j.english)),sorted(korean_scores,reverse=True).index(int(j.korean)))
