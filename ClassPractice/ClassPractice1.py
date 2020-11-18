@@ -27,7 +27,7 @@ class Car():
         return "str : {} - {}".format(self._company,self._details)
 
     def __repr__(self):
-        return "repr : {} - {}".foormat(self._company,self._details)
+        return "repr : {} - {}".format(self._company,self._details)
 
     def __del__(self):
         print("__del__ 함수에 들어갔어용~")
@@ -43,42 +43,53 @@ car1=Car("Ferarri",{"color":"White","horsepower":400,"price":8000})
 car2=Car("Bmw",{"color":"Black","horsepower":270,"price":5000})
 car3=Car("Audi",{"color":"Silver","horsepower":300,"price":6000})
 #Id 확인
+print(1)
 print(id(car1))
 print(id(car2))
 print(id(car3))
 print()
 
+print(2)
 print(car1._company == car2._company)   #False
 print(car1 is car2) #False
 print()
+
 #dir & __dict__ 확인
+print(3)
 print(dir(car1))
 print(dir(car2))
 print()
 print()
 #dic 형태로 key 와 value값을 볼 수 있음
+print(4)
 print(car1.__dict__)
 print(car2.__dict__)
 print()
 #Doctoring(2~6 번째줄 에 있는 글이 나옴) 이런걸 달아주는게 하나하나 모여서 실력이 됨
+print(5)
 print(Car.__doc__)
 print()
 #실행
+print(6)
 car1.detail_info()
 car2.detail_info()
 print()
 #비교
+print(7)
 print(car1.__class__,car2.__class__)
 print(id(car1.__class__),id(car2.__class__))    #main calss 의 id값이기 떄문에 값이 같게 나온다
+
 print()
 
 #에러
+print(8)
 car1.detail_info()
 #Car.detail_info() 라고 하면 에러가 남
 Car.detail_info(car1) #윗 윗 줄과 같은 뜻
 print()
 
 #공유 확인
+print(9)
 print(car1.car_count)
 print(car2.car_count)
 print(car1.__dict__)
@@ -86,11 +97,13 @@ print(car2.__dict__)    #클래스 변수가 포함되지 않고 출력이 됨.
 print(dir(car1)) #클래스 변수가 포함되어 출력됨
 print()
 #접근
+print(10)
 print(car1.car_count)
 print(Car.car_count)    #클래스 이름으로 접근하는게 정석이긴함
 print()
 del car2
 #삭제 확인
+print(11)
 print(Car.car_count)
 #print(car1.car_count)
 
