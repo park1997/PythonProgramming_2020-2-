@@ -63,9 +63,71 @@ class DonggukTime:
     def delete_post(self):
         pass
 
-    def lecture_info(self):
-        pass
-
+    def standing_mc_the_max(self):
+        ise_df = pd.read_excel("산시선이수.xlsx")
+        cee_df = pd.read_excel("건설환경공학선이수.xlsx")
+        mre_df = pd.read_excel("기계공학선이수.xlsx")
+        mme_df = pd.read_excel("멀티미디어선이수.xlsx")
+        ice_df = pd.read_excel("정보통신공학선이수.xlsx")
+        cse_df = pd.read_excel("컴퓨터공학선이수.xlsx")
+        cbe_df = pd.read_excel("화생공선이수.xlsx")
+        eee_df = pd.read_excel("전자전기공학선이수.xlsx")
+        gunchuk_df = pd.read_excel("건축공학선이수.xlsx")
+        architec_df = pd.read_excel("건축학선이수.xlsx")
+        newmeterial_df = pd.read_excel("융에신선이수.xlsx")
+        df_dic={}
+        k=0
+        for i in ise_df['후수교과목']:
+            df_dic[i]=ise_df['선수교과목'][k]
+            k+=1
+        k=0
+        for i in cee_df['후수교과목']:
+            df_dic[i]=cee_df['선수교과목'][k]
+            k+=1
+        k=0
+        for i in mre_df['후수교과목']:
+            df_dic[i]=mre_df['선수교과목'][k]
+            k+=1
+        k=0
+        for i in mme_df['후수교과목']:
+            df_dic[i]=mme_df['선수교과목'][k]
+            k+=1
+        k=0
+        for i in ice_df['후수교과목']:
+            df_dic[i]=ice_df['선수교과목'][k]
+            k+=1
+        k=0
+        for i in cse_df['후수교과목']:
+            df_dic[i]=cse_df['선수교과목'][k]
+            k+=1
+        k=0
+        for i in cbe_df['후수교과목']:
+            df_dic[i]=cbe_df['선수교과목'][k]
+            k+=1
+        k=0
+        for i in eee_df['후수교과목']:
+            df_dic[i]=eee_df['선수교과목'][k]
+            k+=1
+        k=0
+        for i in gunchuk_df['후수교과목']:
+            df_dic[i]=gunchuk_df['선수교과목'][k]
+            k+=1
+        k=0
+        for i in architec_df['후수교과목']:
+            df_dic[i]=architec_df['선수교과목'][k]
+            k+=1
+        k=0
+        for i in newmeterial_df['후수교과목']:
+            df_dic[i]=newmeterial_df['선수교과목'][k]
+            k+=1
+        lec_name=input(" 과목명을 입력 하세요  >>  ")
+        #혹시 사용자 실수로 띄어쓰기 했을경우 고려.
+        lec_name=''.join(lec_name.split())
+        if lec_name in df_dic:
+            result=df_dic[lec_name]
+            print("\"{}\"의 선 이수 과목은 {} 입니다. ".format(lec_name,result))
+        else:
+            print("\"{}\"은 선이수 과목이 없습니다. ".format(lec_name))
     def log_out(self):
         pass
 
@@ -113,14 +175,16 @@ def main():
 while 1:
     main() #로그인 하기
     user=dongguktime[DonggukTime.user_index] #로그인이 된 인스턴스
+    user.show_timeline()
     while 1:
         if len(DonggukTime.df_timeline)==0:
             print("현재 게시물은 0 개 입니다.")
-        user.show_timeline()
-        a=int(input("< 작업 선택 >\n1. 타임라인 보기 --> 1\n2. 타임라인 작성 --> 2\n3. 타임라인 글 삭제 --> 3 "))
+        a=int(input("< 작업 선택 >\n1. 타임라인 보기 --> 1\n2. 타임라인 작성 --> 2\n3. 타임라인 글 삭제 --> 3\n4. 선 이수과목 조회 --> 4"))
         if a==1:
             user.show_timeline()
         elif a==2:
             user.write_timeline()
         elif a==3:
             user.delete_post()
+        elif a==4:
+            user.standing_mc_the_max()
