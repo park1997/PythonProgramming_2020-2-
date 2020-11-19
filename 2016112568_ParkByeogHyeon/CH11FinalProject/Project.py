@@ -13,13 +13,17 @@ class DonggukTime:
     """
     #클래스 인스턴스 순서 저장 하기위해
     user_index=0
+    ID_list=[]
     #df전역변수로 설정
     df_timeline=pd.read_excel("timeline.xlsx")
     def __init__(self,details):
         self.name=details[0]
         self.id=details[1]
         self.pw=details[2]
+        #작성글 정보 저장
         self.post_info=[]
+        #개인 프로필 상태 저장
+        self.profile_info=[]
         print(self.name, self.id, self.pw)
 
     def log_in(self):
@@ -36,7 +40,7 @@ class DonggukTime:
             print("{}".format("-"*50))
             print("강의 평 내용\n")
             print(context)
-            print("{}".format("-"*50))
+            print("{}".format("="*50))
             print()
             print()
 
@@ -134,24 +138,53 @@ class DonggukTime:
     def log_out(self):
         pass
 
+    def edit_profile_id(self):
+        while 1:
+            first_id_input=input("변경할 ID를 입력해 주세요.  >>")
+            second_id_input=input("ID를 다시 한번 입력해 주세요 .  >>\n")
+            if first_id_input==second_id_input:
+                break
+            else:
+                print("아이디가 일치 하지 않습니다. 변경할 ID를 다시 입력해 주세요.")
+                print()
+        self.id=first_id_input
+        print("ID 변경에 성공 하셨습니다.\n")
+    def edit_profile_pw(self):
+        while 1:
+            first_pw_input=input("변경할 Password를 입력해 주세요. >>")
+            second_pw_input=input("Password를 다시 한번 입력해 주세요. >>\n")
+            if first_pw_input==second_pw_input:
+                break
+            else:
+                print("Password가 일치 하지 않습니다. 변경할 Password를 다시 입력해 주세요.")
+                print()
+        self.pw=first_pw_input
+        print("Password 변경에 성공 하셨습니다.\n")
 
 
 #인스턴스들의 집합소
 dongguktime=[]
 def main():
-    print("회원 가입 하기 >> 1\n로그인 하기 >> 2")
+    print("회원 가입 하기 >> 1\n로그인 하기 >> 2\n")
     while 1 :
         a=int(input())
         if a==1:
             name=input("성함을 입력해 주세요. >> ")
-            id=input("ID 를 입력해 주세요.  >> ")
+            #중복되는 아이디가 없게 한다.
+            while 1:
+                id=input("ID 를 입력해 주세요.  >> ")
+                if id not in DonggukTime.ID_list:
+                    break
+                else:
+                    print("이미 존재하는 ID 입니다.\n새로운 ID를 입력해 주세요.")
             pw=input("Password 를 입력해 주세요. >> ")
             #리스트에 객체 저장
             dongguktime.append(DonggukTime([name,id,pw]))
             print()
             print("회원가입 완료!")
+            DonggukTime.ID_list.append(id)
             print()
-            print("회원 가입 하기 >> 1\n로그인 하기 >> 2")
+            print("회원 가입 하기 >> 1\n로그인 하기 >> 2\n")
         else:
             #Boolean형태로 로그인이 되면 True로 바뀌게
             log_in_sign=False
@@ -171,7 +204,7 @@ def main():
                 #로그인 실패
                 print("ID 혹은 Password를 다시 확인해 주세요")
                 print()
-                print("회원 가입 하기 >> 1\n로그인 하기 >> 2")
+                print("회원 가입 하기 >> 1\n로그인 하기 >> 2\n")
 
 
 
@@ -181,8 +214,8 @@ while 1:
     user.show_timeline()
     while 1:
         if len(DonggukTime.df_timeline)==0:
-            print("현재 게시물은 0 개 입니다.")
-        a=int(input("< 작업 선택 >\n1. 타임라인 보기 --> 1\n2. 타임라인 작성 --> 2\n3. 타임라인 글 삭제 --> 3\n4. 선 이수과목 조회 --> 4"))
+            print("현재 게시물은 0 개 입니다.\n")
+        a=int(input("<< 작업 선택 >>\n1. 타임라인 보기 --> 1\n2. 타임라인 작성 --> 2\n3. 타임라인 글 삭제 --> 3\n4. 아이디 변경 --> 4\n5. 비밀번호 변경 --> 5\n7. 선 이수과목 조회 --> 7\n0. 로그아웃 --> 0"))
         if a==1:
             #타임라인 보기
             user.show_timeline()
@@ -193,5 +226,14 @@ while 1:
             #글 삭제
             user.delete_post()
         elif a==4:
+            user.edit_profile_id()
+        elif a==5:
+            user.edit_profile_pw()
+        elif a==6:
+            pass
+
+        elif a==7:
             #선이수과목조회
             user.standing_mc_the_max()
+        elif a==0:
+            break
