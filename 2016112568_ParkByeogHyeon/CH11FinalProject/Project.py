@@ -64,7 +64,7 @@ class DonggukTime:
         DonggukTime.df_timeline=DonggukTime.df_timeline.append({"작성자":self.name,"작성시간":post_now_time,"글내용":post_context,"좋아요수":0,"평점":post_grade,"과목명":post_lecture,"글제목":post_head_name},ignore_index=True)
         print("성공적으로 글을 포스팅 하셨습니다. ")
     def delete_post(self):
-        pass
+        
 
     def standing_mc_the_max(self):
         #모든 엑셀 파일들의 데이터를 불러온다.
@@ -133,7 +133,6 @@ class DonggukTime:
             print("\"{}\"의 선 이수 과목은 {} 입니다. ".format(lec_name,result))
         else:
             print("\"{}\"은 선이수 과목이 없습니다. ".format(lec_name))
-
 
     def log_out(self):
         pass
@@ -226,12 +225,13 @@ while 1:
             #글 삭제
             user.delete_post()
         elif a==4:
+            #아이디 변경
             user.edit_profile_id()
         elif a==5:
+            #password변경
             user.edit_profile_pw()
         elif a==6:
             pass
-
         elif a==7:
             #선이수과목조회
             user.standing_mc_the_max()
