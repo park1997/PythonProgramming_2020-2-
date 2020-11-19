@@ -184,10 +184,14 @@ while 1:
             print("현재 게시물은 0 개 입니다.")
         a=int(input("< 작업 선택 >\n1. 타임라인 보기 --> 1\n2. 타임라인 작성 --> 2\n3. 타임라인 글 삭제 --> 3\n4. 선 이수과목 조회 --> 4"))
         if a==1:
+            #타임라인 보기
             user.show_timeline()
         elif a==2:
+            #타밈라인 글 쓰기
             user.write_timeline()
         elif a==3:
+            #글 삭제
             user.delete_post()
         elif a==4:
+            #선이수과목조회
             user.standing_mc_the_max()
