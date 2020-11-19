@@ -3,8 +3,7 @@ import pandas as pd
 from bs4 import BeautifulSoup
 import lxml
 import requests
-from notebook import Note
-from notebook import NoteBook
+
 
 class DonggukTime:
     """
@@ -64,6 +63,7 @@ class DonggukTime:
         pass
 
     def standing_mc_the_max(self):
+        #모든 엑셀 파일들의 데이터를 불러온다.
         ise_df = pd.read_excel("산시선이수.xlsx")
         cee_df = pd.read_excel("건설환경공학선이수.xlsx")
         mre_df = pd.read_excel("기계공학선이수.xlsx")
@@ -75,6 +75,7 @@ class DonggukTime:
         gunchuk_df = pd.read_excel("건축공학선이수.xlsx")
         architec_df = pd.read_excel("건축학선이수.xlsx")
         newmeterial_df = pd.read_excel("융에신선이수.xlsx")
+        #불러온 데이터를 모두 이 딕셔너리에 넣는다
         df_dic={}
         k=0
         for i in ise_df['후수교과목']:
@@ -128,6 +129,8 @@ class DonggukTime:
             print("\"{}\"의 선 이수 과목은 {} 입니다. ".format(lec_name,result))
         else:
             print("\"{}\"은 선이수 과목이 없습니다. ".format(lec_name))
+
+
     def log_out(self):
         pass
 
