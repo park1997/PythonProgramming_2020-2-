@@ -323,13 +323,18 @@ while 1:
             #password변경
             user.edit_profile_pw()
         elif a==5:
+            #댓글 쓰기
             user.write_comment()
         elif a==6:
+
             user.like()
         elif a==8:
+            #실수로 눌렀을경우를 방지 하기위해 단계를 걸어줌
             b=int(input("정말로 회원 탈퇴를 하시겠습니까?\n1 - 예\n2- 아니요\n>>"))
             if b==1:
+                #회원탈퇴
                 user.secession()
+                #회원탈퇴후 로그인 화면으로 가게끔
                 break
             else:
                 pass
