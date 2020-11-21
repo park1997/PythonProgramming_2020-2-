@@ -13,14 +13,14 @@ class DonggukTime:
     """
     #클래스 인스턴스 순서 저장 하기위해
     user_index=0
-    #로그인할때 이미 저장된 아이디인지 확인하기위해 아이디만 리스트에 전역 변수로 저장
-    ID_list=[]
     #타임라인 게시판 글 목록 클래스변수에 저장
     head_name_list=[]
     #가입된 회원의 정보들(이름과 아이디)
     member_in_this_system=[]
-    #df전역변수로 설정
+    #df전역변수로 설정(타임라인)
     df_timeline=pd.read_excel("timeline.xlsx")
+    #df전역변수로 설정(아이디,패스워드)
+    df_idpw=pd.read_excel("ID,PW.xlsx")
     #__init__
     def __init__(self,details):
         self.name=details[0]
@@ -35,15 +35,15 @@ class DonggukTime:
     #로그인 하기
     def log_in(self):
         main()
-    #타입라인 보여주기
+    #타임라인 보여주기
     def show_timeline(self):
         if len(DonggukTime.df_timeline)==0:
             print("현재 타임라인에 글이 없습니다.")
         for i in range(len(DonggukTime.df_timeline)):
-            name,time,context,likes_num,grade,lecture_name,head_name,comment=DonggukTime.df_timeline.loc[i]
+            name,time,context,likes_num,grade,lecture_name,head_name,comment,id_timeline=DonggukTime.df_timeline.iloc[i]
             print("{} 번째 강의 평 : {}".format(i+1,head_name))
             print("{}".format("-"*50))
-            print("작성자 : {}\n작성 시간: {}".format(name,time))
+            print("작성자 : {}\tID : {}\n작성 시간: {}".format(name,id_timeline,time))
             print("{}".format("-"*50))
             print("과목 명 : {}\n강의 평점 : {}".format(lecture_name,grade))
             print("{}".format("-"*50))
@@ -80,25 +80,30 @@ class DonggukTime:
         DonggukTime.head_name_list.append([post_head_name,post_context])
         print("성공적으로 글을 포스팅 하셨습니다. ")
         print()
-        DonggukTime.df_timeline=DonggukTime.df_timeline.append({"작성자":self.name,"작성시간":post_now_time,"글내용":post_context,"좋아요수":0,"평점":post_grade,"과목명":post_lecture,"글제목":post_head_name,"댓글":""},ignore_index=True)
+        DonggukTime.df_timeline=DonggukTime.df_timeline.append({"작성자":self.name,"작성시간":post_now_time,"글내용":post_context,"좋아요수":0,"평점":post_grade,"과목명":post_lecture,"글제목":post_head_name,"댓글":"","아이디":self.id},ignore_index=True)
         #바뀐 DataFrame을 excel에 저장
         DonggukTime.df_timeline.to_excel("timeline.xlsx",index=False)
     #내가 쓴 글 삭제하기
     def delete_post(self):
-        dic_for_delete={}
-        for i,j in enumerate(DonggukTime.head_name_list):
-            dic_for_delete[i+1]=j
-            print("{} - {}".format(i+1,j[0]))
+        #작성자가 현재 객체의 아이디와 같은경우(아이디는 중복으로 생성 못하게 했으므로.)
+        for_delete_dic={}
+        for i,j in enumerate(DonggukTime.df_timeline["아이디"]):
+            if j==user.id:
+                for_delete_dic[i]=[DonggukTime.df_timeline["글제목"].iloc[i],DonggukTime.df_timeline["글내용"].iloc[i],DonggukTime.df_timeline["아이디"].iloc[i]]
+                print("{} - {}".format(i,DonggukTime.df_timeline["글제목"][i]))
         post_num=int(input("삭제할 본인의 게시물 번호를 입력해 주세요.  >>"))
-
         #DataFrame에 삭제할 index 계산(글제목과 내용이 같은 사람이 썼을 경우,본인이 썼을 경우)
-        index_num_delete=DonggukTime.df_timeline[(DonggukTime.df_timeline["작성자"]==self.name) & (DonggukTime.df_timeline["글제목"]==dic_for_delete[post_num][0]) & (DonggukTime.df_timeline["글내용"]==dic_for_delete[post_num][1])].index
+        for i in range(len(DonggukTime.df_timeline)):
+            if (DonggukTime.df_timeline["작성자"][i]==self.name) and (DonggukTime.df_timeline["글제목"].iloc[i]==for_delete_dic[post_num][0]) and (DonggukTime.df_timeline["글내용"].iloc[i]==for_delete_dic[post_num][1]) and (DonggukTime.df_timeline["아이디"].iloc[i]==for_delete_dic[post_num][2]):
+                index_num_delete=i
+                break
         #DataFrame에 해당 행 삭제
-        DonggukTime.df_timeline.drop(index_num_delete,inplace=True)
+        DonggukTime.df_timeline.drop(DonggukTime.df_timeline.index[index_num_delete],inplace=True)
         #실제엑셀파일에 저장
         DonggukTime.df_timeline.to_excel("timeline.xlsx",index=False)
+
         print("정상적으로 삭제 되었습니다.")
-    #선이수 관계 보여주기
+    #선이수 관계 보여주기 2
     def standing_mc_the_max(self):
         #모든 엑셀 파일들의 데이터를 불러온다.
         ise_df = pd.read_excel("산시선이수.xlsx")
@@ -166,7 +171,9 @@ class DonggukTime:
             print("\"{}\"의 선 이수 과목은 \"{}\" 입니다. ".format(lec_name,result))
         else:
             print("\"{}\"은 선이수 과목이 없습니다. ".format(lec_name))
+    """
     #ID변경
+    #아이디를 바꾸면 바꾸기전 작성했던 게시물의 삭제가 안됨.
     def edit_profile_id(self):
         while 1:
             first_id_input=input("변경할 ID를 입력해 주세요.  >>")
@@ -176,8 +183,12 @@ class DonggukTime:
             else:
                 print("아이디가 일치 하지 않습니다. 변경할 ID를 다시 입력해 주세요.")
                 print()
-        self.id=first_id_input
+        pd.options.mode.chained_assignment = None
+        DonggukTime.df_idpw.loc[DonggukTime.df_idpw.아이디==self.id,"아이디"]=second_id_input
+        DonggukTime.df_idpw.to_excel("ID,PW.xlsx",index=False)
+        user=DonggukTime([DonggukTime.df_idpw["이름"][user_index],DonggukTime.df_idpw["아이디"][user_index],DonggukTime.df_idpw["패스워드"][user_index],DonggukTime.df_idpw["생년월일"][user_index]])
         print("ID 변경에 성공 하셨습니다.\n")
+    """
     #PW변경
     def edit_profile_pw(self):
         while 1:
@@ -188,33 +199,40 @@ class DonggukTime:
             else:
                 print("Password가 일치 하지 않습니다. 변경할 Password를 다시 입력해 주세요.")
                 print()
-        self.pw=first_pw_input
+        DonggukTime.df_idpw.loc[DonggukTime.df_idpw.패스워드==self.id,"패스워드"]=second_pw_input
+        DonggukTime.df_idpw.to_excel("ID,PW.xlsx",index=False)
+        user=DonggukTime([DonggukTime.df_idpw["이름"][user_index],DonggukTime.df_idpw["아이디"][user_index],DonggukTime.df_idpw["패스워드"][user_index],DonggukTime.df_idpw["생년월일"][user_index]])
         print("Password 변경에 성공 하셨습니다.\n")
     #댓글 작성
     def write_comment(self):
         for i,j in enumerate(DonggukTime.df_timeline["글제목"]):
-            print("{} - {}".format(i+1,j))
+            print("{} - {}".format(i,j))
         post_num=int(input("댓글을 달 게시물의 번호를 입력해 주세요.  >>"))
         post_comment=input("댓글을 입력해 주세요. >>")
         #판다스의 경고문을 무시함
         pd.options.mode.chained_assignment = None
         #댓글추가
-        temp=DonggukTime.df_timeline["댓글"][post_num-1]
+        temp=DonggukTime.df_timeline["댓글"][post_num]
         now=time.localtime()
         commenttime_now_time="%04d/%02d/%02d %02d:%02d:%02d"%(now.tm_year,now.tm_mon,now.tm_mday,now.tm_hour,now.tm_min,now.tm_sec)
         temp+="\n{} : {}\t\t{}".format(self.name,post_comment,commenttime_now_time)
-        DonggukTime.df_timeline["댓글"][post_num-1]=temp
+        DonggukTime.df_timeline["댓글"][post_num]=temp
         #Unnamed열 생성 억제
         DonggukTime.df_timeline.to_excel("timeline.xlsx",index=False)
         print("댓글 입력 완료!")
     #좋아요 누르기
     def like(self):
         pass
+    def secession(self):
+        index_num_delete=0
+        for i in range(len(DonggukTime.df_idpw)):
+            if DonggukTime.df_idpw["아이디"][i]==self.id:
+                index_num_delete=i
+                break
+        DonggukTime.df_idpw.drop(DonggukTime.df_idpw.index[index_num_delete],inplace=True)
+        DonggukTime.df_idpw.to_excel("ID,PW.xlsx",index=False)
+        print("회원탈퇴 성공!\n")
 
-
-#pd.set_option("mode.chained_assignment",None)
-#인스턴스들의 집합소
-dongguktime=[]
 #로그인 함수
 def main():
     print("회원 가입 하기 >> 1\n로그인 하기 >> 2\n")
@@ -236,16 +254,25 @@ def main():
             #중복되는 아이디가 없게 한다.
             while 1:
                 id=input("ID 를 입력해 주세요.  >>")
-                if id not in DonggukTime.ID_list:
-                    break
+                for i in range(len(DonggukTime.df_idpw)):
+                    if id == DonggukTime.df_idpw["아이디"][i]:
+                        print("이미 존재하는 ID 입니다.\n새로운 ID를 입력해 주세요.")
+                break
+            #패스워드를 두번 받고 그게 같으면 비밀 번호가 된다.
+            while 1:
+                pw=input("Password 를 입력해 주세요. >>")
+                pw_2=input("Password 를 다시 입력해 주세요. >>")
+                if pw !=pw_2:
+                    print("패스워드가 다릅니다 다시 입력해 주세요.\n")
                 else:
-                    print("이미 존재하는 ID 입니다.\n새로운 ID를 입력해 주세요.")
-            pw=input("Password 를 입력해 주세요. >>")
-            #리스트에 객체 저장
-            dongguktime.append(DonggukTime([name,id,pw,birth]))
+                    break
+
             print()
+            #엑셀에 개인정보 저장
+            DonggukTime.df_idpw=pd.read_excel("ID,PW.xlsx")
+            DonggukTime.df_idpw=DonggukTime.df_idpw.append({"아이디":id,"패스워드":pw,"생년월일":birth,"이름":name},ignore_index=True)
+            DonggukTime.df_idpw.to_excel("ID,PW.xlsx",index=False)
             print("회원가입 완료!")
-            DonggukTime.ID_list.append(id)
             print()
             print("회원 가입 하기 >> 1\n로그인 하기 >> 2\n")
         elif a==2:
@@ -254,8 +281,8 @@ def main():
             log_in_id=input("ID를 입력해 주세요 >>")
             log_in_pw=input("Password를 입력해 주세요 >>")
             print()
-            for i in range(len(dongguktime)):
-                if (log_in_id ==dongguktime[i].id) and (log_in_pw == dongguktime[i].pw):
+            for i in range(len(DonggukTime.df_idpw)):
+                if (log_in_id ==DonggukTime.df_idpw["아이디"][i]) and (log_in_pw == DonggukTime.df_idpw["패스워드"][i]):
                     #로그인이 된 상태
                     log_in_sign=True
                     #로그인한 객체의 리스트 index를 클래스 변수에 저장한다.
@@ -277,11 +304,12 @@ def main():
 
 while 1:
     main() #로그인 하기
-    user=dongguktime[DonggukTime.user_index] #로그인이 된 인스턴스
+    user_index=DonggukTime.user_index
+    user=DonggukTime([DonggukTime.df_idpw["이름"][user_index],DonggukTime.df_idpw["아이디"][user_index],DonggukTime.df_idpw["패스워드"][user_index],DonggukTime.df_idpw["생년월일"][user_index]])
     user.show_timeline()
     print()
     while 1:
-        a=int(input("<< 작업 선택 >>\n\n1. 타임라인 보기 --> 1\n2. 타임라인 작성 --> 2\n3. 타임라인 글 삭제 --> 3\n4. 아이디 변경 --> 4\n5. 비밀번호 변경 --> 5\n6. 댓글 달기 --> 6\n7. 좋아요 누르기 --> 7\n9. 선 이수과목 조회 --> 9\n0. 로그아웃 --> 0\n"))
+        a=int(input("<< 작업 선택 >>\n\n1 - 타임라인 보기\n2 - 타임라인 작성\n3 - 타임라인 글 삭제\n4 - 비밀번호 변경\n5 - 댓글 달기\n6 - 좋아요 누르기\n8 - 회원 탈퇴\n9 - 선 이수과목 조회 --> 9\n0 - 로그아웃\n"))
         if a==1:
             #타임라인 보기
             user.show_timeline()
@@ -292,17 +320,19 @@ while 1:
             #글 삭제
             user.delete_post()
         elif a==4:
-            #아이디 변경
-            user.edit_profile_id()
-        elif a==5:
             #password변경
             user.edit_profile_pw()
-        elif a==6:
+        elif a==5:
             user.write_comment()
-        elif a==7:
-            pass
+        elif a==6:
+            user.like()
         elif a==8:
-            pass
+            b=int(input("정말로 회원 탈퇴를 하시겠습니까?\n1 - 예\n2- 아니요\n>>"))
+            if b==1:
+                user.secession()
+                break
+            else:
+                pass
         elif a==9:
             #선이수과목조회
             user.standing_mc_the_max()
