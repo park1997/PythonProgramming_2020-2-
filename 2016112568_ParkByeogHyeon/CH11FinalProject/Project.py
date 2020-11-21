@@ -211,7 +211,7 @@ class DonggukTime:
     def like(self):
         pass
 
-        
+
 #pd.set_option("mode.chained_assignment",None)
 #인스턴스들의 집합소
 dongguktime=[]
