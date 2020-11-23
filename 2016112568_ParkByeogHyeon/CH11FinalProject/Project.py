@@ -10,7 +10,7 @@ class DonggukTime:
     """
     DonggukTime class(For Engineers)
     Author : Park ByeongHyeon
-    Date : 2020-11-20
+    Date : 2020-11-23
     """
     #클래스 인스턴스 순서 저장 하기위해
     user_index=0
