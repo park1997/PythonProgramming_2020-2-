@@ -22,6 +22,7 @@ class Car():
         #self.car_count=10  이게 찾아지면 이걸 출력하고 이게 없으면 클래스변수에있나? 하고 클래스변수를 찾아본다
         self._details=details
         Car.car_count+=1
+        self.company=company
 
     def __str__(self):
         return "str : {} - {}".format(self._company,self._details)
@@ -37,6 +38,8 @@ class Car():
     def detail_info(self):
         print("Current ID : {}".format(id(self)))
         print("Car Detail Info : {} {}".format(self._company,self._details.get("price")))
+    def company_return(self):
+        return self.company
 
 
 car1=Car("Ferarri",{"color":"White","horsepower":400,"price":8000})
@@ -106,6 +109,9 @@ del car2
 print(11)
 print(Car.car_count)
 #print(car1.car_count)
+print()
+
+print(car1.company_return())
 
 # 인스턴스 네임스페이스에 없으면 상위에서 검색을 함
 # 즉, 동일한 이름으로 변수생성가능(인스턴스 검색후 -> 상위(클래스 변수, 부모 클래스 변수))

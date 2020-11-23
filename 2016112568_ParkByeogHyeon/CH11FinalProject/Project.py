@@ -3,6 +3,7 @@ import pandas as pd
 from bs4 import BeautifulSoup
 import lxml
 import requests
+import numpy as np
 
 
 class DonggukTime:
@@ -40,12 +41,12 @@ class DonggukTime:
         if len(DonggukTime.df_timeline)==0:
             print("현재 타임라인에 글이 없습니다.")
         for i in range(len(DonggukTime.df_timeline)):
-            name,time,context,likes_num,grade,lecture_name,head_name,comment,id_timeline=DonggukTime.df_timeline.iloc[i]
+            name,time,context,likes_num,grade,lecture_name,head_name,comment,id_timeline,professor_name=DonggukTime.df_timeline.iloc[i]
             print("{} 번째 강의 평 : {}".format(i+1,head_name))
             print("{}".format("-"*50))
             print("작성자 : {}\tID : {}\n작성 시간: {}".format(name,id_timeline,time))
             print("{}".format("-"*50))
-            print("과목 명 : {}\n강의 평점 : {}".format(lecture_name,grade))
+            print("과목 명 : {}\t교수님 성함 : {}\n강의 평점 : {}".format(lecture_name,professor_name,grade))
             print("{}".format("-"*50))
             print("강의 평 내용\n")
             print(context)
@@ -59,6 +60,11 @@ class DonggukTime:
         post_head_name=input("글 제목을 입력 하세요.  >>")
         post_context=input("글 내용을 입력 하세요.  >>")
         post_lecture=input("강의 이름을 입력 하세요.  >>")
+        #실수로 띄어쓰기로 강의명을 입력했을경우 공백을 제거해준다.
+        post_lecture="".join(post_lecture)
+        post_professor_name=input("교수님의 성함을 입력 하세요. >>")
+        #실수로 띄어쓰기로 교수명을 입력했을경우 공백을 제거해준다.
+        post_professor_name="".join(post_professor_name)
         while 1:
             try:
                 post_grade=float(input("강의 평점을 0점 이상 10점 이하로 입력해 주세요. >>"))
@@ -80,7 +86,7 @@ class DonggukTime:
         DonggukTime.head_name_list.append([post_head_name,post_context])
         print("성공적으로 글을 포스팅 하셨습니다. ")
         print()
-        DonggukTime.df_timeline=DonggukTime.df_timeline.append({"작성자":self.name,"작성시간":post_now_time,"글내용":post_context,"좋아요수":0,"평점":post_grade,"과목명":post_lecture,"글제목":post_head_name,"댓글":"","아이디":self.id},ignore_index=True)
+        DonggukTime.df_timeline=DonggukTime.df_timeline.append({"작성자":self.name,"작성시간":post_now_time,"글내용":post_context,"좋아요수":0,"평점":post_grade,"과목명":post_lecture,"글제목":post_head_name,"댓글":"","아이디":self.id,"교수님성함":post_professor_name},ignore_index=True)
         #바뀐 DataFrame을 excel에 저장
         DonggukTime.df_timeline.to_excel("timeline.xlsx",index=False)
     #내가 쓴 글 삭제하기
@@ -193,13 +199,20 @@ class DonggukTime:
     def edit_profile_pw(self):
         while 1:
             first_pw_input=input("변경할 Password를 입력해 주세요. >>")
-            second_pw_input=input("Password를 다시 한번 입력해 주세요. >>\n")
+            second_pw_input=input("Password를 다시 한번 입력해 주세요. >>")
+            print()
             if first_pw_input==second_pw_input:
                 break
             else:
                 print("Password가 일치 하지 않습니다. 변경할 Password를 다시 입력해 주세요.")
                 print()
-        DonggukTime.df_idpw.loc[DonggukTime.df_idpw.패스워드==self.id,"패스워드"]=second_pw_input
+        delete_index=""
+        for i,j in enumerate(DonggukTime.df_idpw["아이디"]):
+            if self.id==j:
+                delete_index=i
+                break
+        DonggukTime.df_idpw.loc[delete_index,"패스워드"]="String"
+        DonggukTime.df_idpw.loc[delete_index,"패스워드"]=first_pw_input
         DonggukTime.df_idpw.to_excel("ID,PW.xlsx",index=False)
         user=DonggukTime([DonggukTime.df_idpw["이름"][user_index],DonggukTime.df_idpw["아이디"][user_index],DonggukTime.df_idpw["패스워드"][user_index],DonggukTime.df_idpw["생년월일"][user_index]])
         print("Password 변경에 성공 하셨습니다.\n")
@@ -215,8 +228,10 @@ class DonggukTime:
         temp=DonggukTime.df_timeline["댓글"][post_num]
         now=time.localtime()
         commenttime_now_time="%04d/%02d/%02d %02d:%02d:%02d"%(now.tm_year,now.tm_mon,now.tm_mday,now.tm_hour,now.tm_min,now.tm_sec)
-        temp+="\n{} : {}\t\t{}".format(self.name,post_comment,commenttime_now_time)
-        DonggukTime.df_timeline["댓글"][post_num]=temp
+        temp1="{} : {}\t\t{}".format(self.name,post_comment,commenttime_now_time)
+        temp2=str(temp)+"\n"+str(temp1)
+        DonggukTime.df_timeline.loc[post_num,"댓글"]="String"
+        DonggukTime.df_timeline.loc[post_num,"댓글"]=temp2
         #Unnamed열 생성 억제
         DonggukTime.df_timeline.to_excel("timeline.xlsx",index=False)
         print("댓글 입력 완료!")
@@ -232,10 +247,12 @@ class DonggukTime:
         DonggukTime.df_idpw.drop(DonggukTime.df_idpw.index[index_num_delete],inplace=True)
         DonggukTime.df_idpw.to_excel("ID,PW.xlsx",index=False)
         print("회원탈퇴 성공!\n")
+    def id_return(self):
+        return self.id
 
 #로그인 함수
 def main():
-    print("회원 가입 하기 >> 1\n로그인 하기 >> 2\n")
+    print("회원 가입 하기 >> 1\n로그인 하기 >> 2\n가입된 회원 정보 >> 3")
     while 1 :
         a=int(input())
         if a==1:
@@ -252,12 +269,14 @@ def main():
                     #주민번호를 숫자가아니라 문자열로 입력한 경우
                     print("숫자를 입력해주세요!")
             #중복되는 아이디가 없게 한다.
+            id_sign=False
             while 1:
                 id=input("ID 를 입력해 주세요.  >>")
-                for i in range(len(DonggukTime.df_idpw)):
-                    if id == DonggukTime.df_idpw["아이디"][i]:
-                        print("이미 존재하는 ID 입니다.\n새로운 ID를 입력해 주세요.")
-                break
+                #입력한 ID가 DataFrame안에 있는지 확인
+                if sum(DonggukTime.df_idpw["아이디"].astype("str").str.contains(id))>0:
+                    print("이미 존재하는 ID 입니다. ID를 다시 입력해주세요!")
+                else:
+                    break
             #패스워드를 두번 받고 그게 같으면 비밀 번호가 된다.
             while 1:
                 pw=input("Password 를 입력해 주세요. >>")
@@ -282,7 +301,7 @@ def main():
             log_in_pw=input("Password를 입력해 주세요 >>")
             print()
             for i in range(len(DonggukTime.df_idpw)):
-                if (log_in_id ==DonggukTime.df_idpw["아이디"][i]) and (log_in_pw == DonggukTime.df_idpw["패스워드"][i]):
+                if (log_in_id ==DonggukTime.df_idpw["아이디"][i]) and (log_in_pw == str(DonggukTime.df_idpw["패스워드"][i])):
                     #로그인이 된 상태
                     log_in_sign=True
                     #로그인한 객체의 리스트 index를 클래스 변수에 저장한다.
@@ -295,11 +314,16 @@ def main():
                 #로그인 실패(객체에 저장된 아이디와 비번이 틀린경우)
                 print("ID 혹은 Password를 다시 확인해 주세요")
                 print()
-                print("회원 가입 하기 >> 1\n로그인 하기 >> 2\n")
+                print("회원 가입 하기 >> 1\n로그인 하기 >> 2\n가입된 회원 정보 >> 3")
+        elif a==3:
+            for i in range(len(DonggukTime.df_idpw)):
+                print("{}. \n이름 : {}\n생년월일 : {}\n아이디 : {}".format(i+1,DonggukTime.df_idpw["이름"][i],DonggukTime.df_idpw["생년월일"][i],DonggukTime.df_idpw["아이디"][i]))
+                print()
+            print("회원 가입 하기 >> 1\n로그인 하기 >> 2\n가입된 회원 정보 >> 3")
+
         else:
             #1,2번중 하나를 입력하지 않은 경우!
             print("1번 혹은 2번만 입력해 주세요!")
-
 
 
 while 1:
@@ -309,7 +333,7 @@ while 1:
     user.show_timeline()
     print()
     while 1:
-        a=int(input("<< 작업 선택 >>\n\n1 - 타임라인 보기\n2 - 타임라인 작성\n3 - 타임라인 글 삭제\n4 - 비밀번호 변경\n5 - 댓글 달기\n6 - 좋아요 누르기\n8 - 회원 탈퇴\n9 - 선 이수과목 조회 --> 9\n0 - 로그아웃\n"))
+        a=int(input("<< 작업 선택 >>\n\n1 - 타임라인 보기\n2 - 타임라인 작성\n3 - 타임라인 글 삭제\n4 - 비밀번호 변경\n5 - 댓글 달기\n6 - 좋아요 누르기\n8 - 회원 탈퇴\n9 - 선 이수과목 조회\n0 - 로그아웃\n"))
         if a==1:
             #타임라인 보기
             user.show_timeline()
@@ -318,7 +342,12 @@ while 1:
             user.write_timeline()
         elif a==3:
             #글 삭제
-            user.delete_post()
+            if sum(DonggukTime.df_timeline["아이디"].astype("str").str.contains(user.id_return()))>0:
+                user.delete_post()
+            else:
+                #내가 작성한 글이 없을때
+                print("본인은 작성한 글이 없습니다. ")
+                print()
         elif a==4:
             #password변경
             user.edit_profile_pw()

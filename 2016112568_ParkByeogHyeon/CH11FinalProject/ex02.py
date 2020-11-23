@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 class test:
     df_timeline=pd.read_excel("timeline.xlsx")
     df_idpw=pd.read_excel("ID,PW.xlsx")
@@ -8,8 +9,13 @@ class test:
 
 
 df_idpw=pd.read_excel("ID,PW.xlsx")
+df_timeline=pd.read_excel("timeline.xlsx")
+
+print(df_idpw["아이디"].apply(str))
+df_idpw="sibal"+df_idpw["아이디"].apply(str)
 print(df_idpw)
-pd.options.mode.chained_assignment = None
-df_idpw.loc[df_idpw.아이디=="asd","아이디"]="시1발"
-for a,b,c,d in enumerate(df_idpw):
-    print(a,b,c,d)
+#pd.options.mode.chained_assignment = None
+#df_idpw.loc[df_idpw.아이디=="asd","아이디"]="시1발"
+#for a,b,c,d in enumerate(df_idpw):
+#    print(a,b,c,d)
+#
