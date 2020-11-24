@@ -38,6 +38,7 @@ class DonggukTime:
         main()
     #타임라인 보여주기
     def show_timeline(self):
+        DonggukTime.df_timeline.sort_values(["작성시간"],ascending=False,inplace=True)
         if len(DonggukTime.df_timeline)==0:
             print("현재 타임라인에 글이 없습니다.")
         for i in range(len(DonggukTime.df_timeline)):
