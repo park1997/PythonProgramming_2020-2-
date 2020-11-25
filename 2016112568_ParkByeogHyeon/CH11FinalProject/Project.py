@@ -38,12 +38,12 @@ class DonggukTime:
         main()
     #타임라인 보여주기
     def show_timeline(self):
-        DonggukTime.df_timeline.sort_values(["작성시간"],ascending=False,inplace=True)
-        if len(DonggukTime.df_timeline)==0:
+        df_timeline_sorted=DonggukTime.df_timeline.sort_values(["작성시간"],ascending=False)
+        if len(df_timeline_sorted)==0:
             print("현재 타임라인에 글이 없습니다.")
-        for i in range(len(DonggukTime.df_timeline)):
-            name,time,context,likes_num,grade,lecture_name,head_name,comment,id_timeline,professor_name=DonggukTime.df_timeline.iloc[i]
-            print("{} 번째 강의 평 : {}".format(i+1,head_name))
+        for i in range(len(df_timeline_sorted)):
+            name,time,context,likes_num,grade,lecture_name,head_name,comment,id_timeline,professor_name=df_timeline_sorted.iloc[i]
+            print("{} 번째 강의 평 : {}".format(len(df_timeline_sorted)-i,head_name))
             print("{}".format("-"*50))
             print("작성자 : {}\tID : {}\n작성 시간: {}".format(name,id_timeline,time))
             print("{}".format("-"*50))
@@ -260,7 +260,7 @@ def main():
             name=input("성함을 입력해 주세요. >>")
             while 1:
                 try:
-                    birth=int(input("주민번호 앞 6자리(생년월일)를 입력해 주세요. >>"))
+                    birth=input("주민번호 앞 6자리(생년월일)를 입력해 주세요. >>")
                     #6자리로 입력하지 않은 경우!
                     if len(str(birth))!=6:
                         print("띄어쓰기 없이 6자리로 입력해주세요!")
