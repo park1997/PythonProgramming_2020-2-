@@ -14,8 +14,6 @@ class DonggukTime:
     """
     #클래스 인스턴스 순서 저장 하기위해
     user_index=0
-    #타임라인 게시판 글 목록 클래스변수에 저장
-    head_name_list=[]
     #가입된 회원의 정보들(이름과 아이디)
     member_in_this_system=[]
     #df전역변수로 설정(타임라인)
@@ -28,22 +26,17 @@ class DonggukTime:
         self.id=details[1]
         self.pw=details[2]
         self.birth=details[3]
-        #작성글 정보 저장
-        self.post_info=[]
-        #개인 프로필 상태 저장
-        self.profile_info=[]
         print(self.name, self.id, self.pw,self.birth)
-    #로그인 하기
-    def log_in(self):
-        main()
     #타임라인 보여주기
     def show_timeline(self):
         df_timeline_sorted=DonggukTime.df_timeline.sort_values(["작성시간"],ascending=False)
         if len(df_timeline_sorted)==0:
             print("현재 타임라인에 글이 없습니다.")
         for i in range(len(df_timeline_sorted)):
-            name,time,context,likes_num,grade,lecture_name,head_name,comment,id_timeline,professor_name=df_timeline_sorted.iloc[i]
+            name,time,context,likes_num,grade,lecture_name,head_name,comment,id_timeline,professor_name,like_id=df_timeline_sorted.iloc[i]
             print("{} 번째 강의 평 : {}".format(len(df_timeline_sorted)-i,head_name))
+            print("{}".format("-"*50))
+            print("좋아요 : {}".format(likes_num))
             print("{}".format("-"*50))
             print("작성자 : {}\tID : {}\n작성 시간: {}".format(name,id_timeline,time))
             print("{}".format("-"*50))
@@ -81,13 +74,9 @@ class DonggukTime:
         now=time.localtime()
         post_now_time="%04d/%02d/%02d %02d:%02d:%02d"%(now.tm_year,now.tm_mon,now.tm_mday,now.tm_hour,now.tm_min,now.tm_sec)
 
-        #나중에 글 삭제를 위해 정보 저장
-        self.post_info.append([post_head_name,post_lecture,post_context])
-        #댓글 혹은 좋아요 하기위해 글 제목 저장
-        DonggukTime.head_name_list.append([post_head_name,post_context])
         print("성공적으로 글을 포스팅 하셨습니다. ")
         print()
-        DonggukTime.df_timeline=DonggukTime.df_timeline.append({"작성자":self.name,"작성시간":post_now_time,"글내용":post_context,"좋아요수":0,"평점":post_grade,"과목명":post_lecture,"글제목":post_head_name,"댓글":"","아이디":self.id,"교수님성함":post_professor_name},ignore_index=True)
+        DonggukTime.df_timeline=DonggukTime.df_timeline.append({"작성자":self.name,"작성시간":post_now_time,"글내용":post_context,"좋아요수":0,"평점":post_grade,"과목명":post_lecture,"글제목":post_head_name,"댓글":"","아이디":self.id,"교수님성함":post_professor_name,"좋아요아이디":0},ignore_index=True)
         #바뀐 DataFrame을 excel에 저장
         DonggukTime.df_timeline.to_excel("timeline.xlsx",index=False)
     #내가 쓴 글 삭제하기
@@ -110,7 +99,7 @@ class DonggukTime:
         DonggukTime.df_timeline.to_excel("timeline.xlsx",index=False)
 
         print("정상적으로 삭제 되었습니다.")
-    #선이수 관계 보여주기 2
+    #선이수 관계 보여주기
     def standing_mc_the_max(self):
         #모든 엑셀 파일들의 데이터를 불러온다.
         ise_df = pd.read_excel("산시선이수.xlsx")
@@ -170,7 +159,7 @@ class DonggukTime:
         for i in newmeterial_df['후수교과목']:
             df_dic[i]=newmeterial_df['선수교과목'][k]
             k+=1
-        lec_name=input(" 과목명을 입력 하세요  >>  ")
+        lec_name=input(" 과목명을 입력 하세요.  >>")
         #혹시 사용자 실수로 띄어쓰기 했을경우 고려.
         lec_name=''.join(lec_name.split())
         if lec_name in df_dic:
@@ -178,24 +167,6 @@ class DonggukTime:
             print("\"{}\"의 선 이수 과목은 \"{}\" 입니다. ".format(lec_name,result))
         else:
             print("\"{}\"은 선이수 과목이 없습니다. ".format(lec_name))
-    """
-    #ID변경
-    #아이디를 바꾸면 바꾸기전 작성했던 게시물의 삭제가 안됨.
-    def edit_profile_id(self):
-        while 1:
-            first_id_input=input("변경할 ID를 입력해 주세요.  >>")
-            second_id_input=input("ID를 다시 한번 입력해 주세요 .  >>\n")
-            if first_id_input==second_id_input:
-                break
-            else:
-                print("아이디가 일치 하지 않습니다. 변경할 ID를 다시 입력해 주세요.")
-                print()
-        pd.options.mode.chained_assignment = None
-        DonggukTime.df_idpw.loc[DonggukTime.df_idpw.아이디==self.id,"아이디"]=second_id_input
-        DonggukTime.df_idpw.to_excel("ID,PW.xlsx",index=False)
-        user=DonggukTime([DonggukTime.df_idpw["이름"][user_index],DonggukTime.df_idpw["아이디"][user_index],DonggukTime.df_idpw["패스워드"][user_index],DonggukTime.df_idpw["생년월일"][user_index]])
-        print("ID 변경에 성공 하셨습니다.\n")
-    """
     #PW변경
     def edit_profile_pw(self):
         while 1:
@@ -231,6 +202,7 @@ class DonggukTime:
         commenttime_now_time="%04d/%02d/%02d %02d:%02d:%02d"%(now.tm_year,now.tm_mon,now.tm_mday,now.tm_hour,now.tm_min,now.tm_sec)
         temp1="{} : {}\t\t{}".format(self.name,post_comment,commenttime_now_time)
         temp2=str(temp)+"\n"+str(temp1)
+        #초기화후 댓글 추가
         DonggukTime.df_timeline.loc[post_num,"댓글"]="String"
         DonggukTime.df_timeline.loc[post_num,"댓글"]=temp2
         #Unnamed열 생성 억제
@@ -238,7 +210,38 @@ class DonggukTime:
         print("댓글 입력 완료!")
     #좋아요 누르기
     def like(self):
-        pass
+        #한 게시물에 한아이디로 하나의 좋아요만 누를수 있게하기위해
+        like_dic={}
+        for i,j in enumerate(DonggukTime.df_timeline["글제목"]):
+            like_dic[j]=[]
+            print("{} - {}".format(i,j))
+        print()
+        like_num=int(input("좋아요를 누를 게시물의 번호를 입력하세요. >>"))
+        print()
+        #판다스의 경고문을 무시함
+        pd.options.mode.chained_assignment = None
+        temp=DonggukTime.df_timeline["좋아요아이디"].iloc[like_num]
+        if str(temp) == str(0) :   #비어있는 셀
+            #판다스의 경고문을 무시함
+            pd.options.mode.chained_assignment = None
+            temp=self.id
+            DonggukTime.df_timeline.loc[like_num,"좋아요아이디"]="String"
+            DonggukTime.df_timeline.loc[like_num,"좋아요아이디"]=temp
+            DonggukTime.df_timeline.loc[like_num,"좋아요수"]=1
+            DonggukTime.df_timeline.to_excel("timeline.xlsx",index=False)
+            print("좋아요 누르기 완료!\n")
+        else:
+            if self.id in DonggukTime.df_timeline["좋아요아이디"].iloc[like_num].split():
+                print("이미 좋아요를 누르셨습니다!\n")
+            else:
+                temp=temp+" "+self.id
+                DonggukTime.df_timeline.loc[like_num,"좋아요아이디"]="String"
+                DonggukTime.df_timeline.loc[like_num,"좋아요아이디"]=temp
+                number=len(list(temp.split()))
+                DonggukTime.df_timeline.loc[like_num,"좋아요수"]=number
+                DonggukTime.df_timeline.to_excel("timeline.xlsx",index=False)
+                print("좋아요 누르기 완료!\n")
+    #회원탈퇴하기
     def secession(self):
         index_num_delete=0
         for i in range(len(DonggukTime.df_idpw)):
@@ -334,7 +337,7 @@ while 1:
     user.show_timeline()
     print()
     while 1:
-        a=int(input("<< 작업 선택 >>\n\n1 - 타임라인 보기\n2 - 타임라인 작성\n3 - 타임라인 글 삭제\n4 - 비밀번호 변경\n5 - 댓글 달기\n6 - 좋아요 누르기\n8 - 회원 탈퇴\n9 - 선 이수과목 조회\n0 - 로그아웃\n"))
+        a=int(input("<< 작업 선택 >>\n\n1 - 타임라인 보기\n2 - 타임라인 작성\n3 - 타임라인 글 삭제\n4 - 비밀번호 변경\n5 - 댓글 달기\n6 - 좋아요 누르기\n8 - 회원 탈퇴\n9 - 선 이수과목 조회\n10 - 강의 평점 순위\n0 - 로그아웃\n"))
         if a==1:
             #타임라인 보기
             user.show_timeline()
@@ -371,6 +374,8 @@ while 1:
         elif a==9:
             #선이수과목조회
             user.standing_mc_the_max()
+        elif a==10:
+            pass
         elif a==0:
             #로그인 창으로 가게 만듬
             break
