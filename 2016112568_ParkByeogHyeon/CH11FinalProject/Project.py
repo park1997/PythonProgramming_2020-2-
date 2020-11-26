@@ -253,6 +253,50 @@ class DonggukTime:
         print("회원탈퇴 성공!\n")
     def id_return(self):
         return self.id
+    def crawling(self):
+        sw_url="https://itcec.dongguk.edu/bbs/board.php?bo_table=itedu4_11&page=2&page=1"
+        sw_res= requests.get(sw_url)
+        #혹시나 프로그램에 문제가 생기면 종료를 하도록 함.
+        sw_res.raise_for_status()
+        #sw_soup은 모든 정보를 가지고 있다.
+        sw_soup=BeautifulSoup(sw_res.text,"lxml")
+        sw_info1=sw_soup.table.td.find_all("a",attrs={"style":"font-weight:bold;color:#000000;"})
+        #공지사항(공지)
+        ballground=[]
+        for i in sw_info1:
+            ballground.append(i.get_text())
+        a_tag=sw_soup.select("a")
+        result=[]
+        for i in a_tag:
+            result.append(i.get_text())
+        del result[:result.index(ballground[0])]
+        del result[:result.index(ballground[-1])]
+        result=[i for i in result if len(i)>5]
+        print()
+        print("<< 공지글 >>")
+        for i in ballground:
+            print(i)
+        print()
+        print("<< 일반글 >>")
+        for i in result:
+            print(i)
+        print()
+        print("링크 : https://itcec.dongguk.edu/bbs/board.php?bo_table=itedu4_11&page=2&page=1")
+        print()
+    def rank(self):
+        print()
+        print("<< 과목 평점 RANKING >>")
+        head_name=[i for i in DonggukTime.df_timeline["과목명"]]
+        head_name=list(set(head_name))
+        for_rank=[]
+        a=DonggukTime.df_timeline[["과목명","평점"]]
+        for i in head_name:
+            for_rank.append([i,round(a["평점"].loc[a["과목명"]==i].mean(),4)])
+        for_rank=sorted(for_rank, key=lambda x:x[1],reverse=True)
+        for i,j in enumerate(for_rank):
+            print("{} - {} :\t{}점".format(i+1,j[0],j[1]))
+        print()
+
 
 #로그인 함수
 def main():
@@ -337,7 +381,7 @@ while 1:
     user.show_timeline()
     print()
     while 1:
-        a=int(input("<< 작업 선택 >>\n\n1 - 타임라인 보기\n2 - 타임라인 작성\n3 - 타임라인 글 삭제\n4 - 비밀번호 변경\n5 - 댓글 달기\n6 - 좋아요 누르기\n8 - 회원 탈퇴\n9 - 선 이수과목 조회\n10 - 강의 평점 순위\n0 - 로그아웃\n"))
+        a=int(input("<< 작업 선택 >>\n\n1 - 타임라인 보기\n2 - 타임라인 작성\n3 - 타임라인 글 삭제\n4 - 비밀번호 변경\n5 - 댓글 달기\n6 - 좋아요 누르기\n8 - 회원 탈퇴\n9 - 선 이수과목 조회\n10 - 강의 평점 순위\n11 - 융합소프트웨어 공지사항\n0 - 로그아웃\n"))
         if a==1:
             #타임라인 보기
             user.show_timeline()
@@ -375,7 +419,9 @@ while 1:
             #선이수과목조회
             user.standing_mc_the_max()
         elif a==10:
-            pass
+            user.rank()
+        elif a==11:
+            user.crawling()
         elif a==0:
             #로그인 창으로 가게 만듬
             break
