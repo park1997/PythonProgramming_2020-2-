@@ -403,7 +403,6 @@ while 1:
             #댓글 쓰기
             user.write_comment()
         elif a==6:
-
             user.like()
         elif a==8:
             #실수로 눌렀을경우를 방지 하기위해 단계를 걸어줌
