@@ -13,14 +13,16 @@ for i in s_name0:
     a=list(i.split(","))
     if a[1]=="F":
         if a[0] not in name_dic_f:
-            name_dic_f[a[0]]=1
+            name_dic_f[a[0]]=0
+            name_dic_f[a[0]]+=int(a[2])
         else:
-            name_dic_f[a[0]]+=1
+            name_dic_f[a[0]]+=int(a[2])
     else:
         if a[0] not in name_dic_m:
-            name_dic_m[a[0]]=1
+            name_dic_m[a[0]]=0
+            name_dic_m[a[0]]+=int(a[2])
         else:
-            name_dic_m[a[0]]+=1
+            name_dic_m[a[0]]+=int(a[2])
 
 name_dic_m=sorted(name_dic_m.items(), key=lambda x:x[1], reverse=True)
 name_dic_f=sorted(name_dic_f.items(), key=lambda x:x[1], reverse=True)
@@ -36,8 +38,8 @@ for i in range(10):
     female.append(name_dic_f[i])
 
 
-print("---------------------------------------")
+print("{}".format("-"*30))
 print("2000~2018 가장 인기있는 아이 이름 TOP10")
-print("---------------------------------------")
+print("{}".format("-"*30))
 for i in range(10):
     print("{}\t\t{}\t\t{}\t\t{}\t\t{}".format(i+1,female[i][0],female[i][1],man[i][0],man[i][1]))

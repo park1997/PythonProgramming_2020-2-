@@ -1,5 +1,5 @@
 from collections import Counter
-f=open('D:/Python/Atom/2016112568_ParkByeogHyeon/CH7/대한민국헌법_1장.txt','r')
+f=open('대한민국헌법_1장.txt','r')
 result=""
 for i in f.readlines():
     result+=i
