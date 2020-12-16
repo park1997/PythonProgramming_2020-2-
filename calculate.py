@@ -22,3 +22,5 @@ class Calculation:
 
     def get_division(self):
         return self.start / self.end
+
+        

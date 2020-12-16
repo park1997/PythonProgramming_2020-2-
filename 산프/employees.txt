@@ -1,0 +1,8 @@
+Name		 : John
+Position	: staff
+Salary		: $3000
+------------------------------
+Name		 : Jack
+Position	: manager
+Salary		: $3500
+------------------------------
