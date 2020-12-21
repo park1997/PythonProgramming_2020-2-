@@ -1,34 +1,10 @@
-#6
 import sys
-a=list(map(int,sys.stdin.readline().split()))
-b=list(map(int,sys.stdin.readline().split()))
-b.sort()
-print(b[a[1]-1])
-
-#5
-from math import gcd
-import sys
-a,b=map(int,sys.stdin.readline().split())
-print(gcd(a,b))
-
- # 3
- a={0:0,1:1,2:1}
-def f(n):
-    if n in a:
-        return a[n]
-    else:
-        a[n] = f(n-2) + f(n-1)
-        return a[n]
-print(f(int(input())))
-
-
-
-
-import sys
-def f(x):
-    num=set(range(2,x+1))
-    for i in range(2,x+1):
-        if i in num:
-            num-=set(range(2*i,x+1,i))
-    return len(num)
-print(f(int(sys.stdin.readline())))
+a=sys.stdin.readline()
+b=sys.stdin.readline()
+dp=[[0]*(len(b)+1)  for i in range(len(a))]
+for i in range(1,len(a)):
+    for k in range(1,len(b)+1):
+        if a[i-1]==b[k-1]:
+            dp[i][k]=dp[i-1][k-1]+1
+        else: dp[i][k]=max(dp[i-1][k],dp[i][k-1])
+print(dp[-1][-1])
