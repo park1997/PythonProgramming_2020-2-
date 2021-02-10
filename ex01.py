@@ -1,10 +1,7 @@
-import sys
-a=sys.stdin.readline()
-b=sys.stdin.readline()
-dp=[[0]*(len(b)+1)  for i in range(len(a))]
-for i in range(1,len(a)):
-    for k in range(1,len(b)+1):
-        if a[i-1]==b[k-1]:
-            dp[i][k]=dp[i-1][k-1]+1
-        else: dp[i][k]=max(dp[i-1][k],dp[i][k-1])
-print(dp[-1][-1])
+import pandas as pd
+
+df=pd.read_csv("시가총액1-200.csv")
+for i in range(len(df)):
+    print("{} {} {}".format(df["종목명"][i],df["현재가"][i],df["전일비"][i]))
+
+print(df["종목명"][0])
