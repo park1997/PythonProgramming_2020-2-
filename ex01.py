@@ -1,6 +1,3 @@
-def in_acceptable_range(number):
-    if (number<10**(7) and number >10**(-7)) or ((-number) > 10**(-7) and (-number) < 10**7):
-        return True
-    return False
-
-print(in_acceptable_range(10))
+def calc(n):
+    return print(int((3/2) * ((((2*n+1)*(n+1)*n)/6) + (n*(n+1)/2))))
+calc(int(input()))
