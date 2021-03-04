@@ -90,12 +90,40 @@ print(p1._asdict)
 print(p4._asdict)
 
 # 실 사용 실습
-# 반에 20 명있음 4개의 반(A,B,C,D)이있음
+# 반에 20 명있음 4개의 반(A,B,C,D)이 있음
+Classes = namedtuple('Classes',["rank","number"])
+
+# 그룹 리스트 선언
+numbers = [str(n) for n in range(1,21)]
+ranks = 'A B C D'.split()
+print()
+print("9. ")
+print(numbers)
+print(ranks)
+
+# list comprehension
+students =[Classes(rank,number) for rank in ranks for number in numbers]
+print()
+print("10. ")
+print(students)
+print(len(students))
+
+# 추천
+students2 = [Classes(rank,number) 
+            for rank in 'A B C D'.split()
+                for number in [str(n)
+                    for n in range(1,21)]]
+print()
+print("11. ")
+print(students2)
+# print(students2[0].rank)
+print(len(students2))
 
 
-
-
-
-
-
+# 출력
+print()
+print("12. ")
+for s in students2:
+    # print(s.rank,s.number)
+    print(s)
 
