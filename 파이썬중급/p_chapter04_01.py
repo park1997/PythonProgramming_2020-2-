@@ -28,3 +28,63 @@ print("2. ")
 print(code_list2)
 
 # Comprehending Lists + Map, Filter
+code_list3 = [ord(s) for s in chars if ord(s)>40]
+print()
+print("3. ")
+print(code_list3)
+
+# filter와 map 이용
+code_list4 = list(filter(lambda x : x>40, map(ord,chars)))
+print()
+print("4.")
+print(code_list4)
+
+print()
+print([chr(s) for s in code_list1])
+print([chr(s) for s in code_list2])
+print([chr(s) for s in code_list3])
+print([chr(s) for s in code_list4])
+
+
+# Generater 생성
+import array
+
+# Generater : 한번에 한 개의 항목을 생성(메모리 유지 X)
+tuple_g = (ord(s) for s in chars)
+array_g = array.array("I",(ord(s) for s in chars))
+print(array_g)
+print(array_g.tolist())
+print()
+
+print(type(tuple_g))
+print(next(tuple_g))
+print(next(tuple_g))
+
+
+# 제너레이터 예제
+print(('%s'% c+str(n) for c in ['A','B','C','D'] for n in range(1,21)))
+
+for s in ('%s'% c+str(n) for c in ['A','B','C','D'] for n in range(1,21)):
+    print(s)
+print()
+print()
+# 리스트 주의
+# 깊은 복사 얕은복사
+marks1 = [['~']*3 for _ in range(4)]
+marks2 =[['~']*3]*4 # 아이디 값 까지 같이 복사됨
+print(marks1)
+print(marks2)
+
+# 수정
+marks1[0][1] = 'X'
+marks2[0][1] = 'X'
+
+print(marks1)
+print(marks2) # 이게 왜이렇게 될까요......
+# marks1 같은 경우는 id값이 모두 다르게 복사가 된거고
+# marks2 같은 경우는 하나의 주소값이 4개가 복사가 된것 이기때문에 이런현상이 나옴
+
+# 증명 
+print([id(i) for i in marks1])
+print([id(i) for i in marks2])
+
