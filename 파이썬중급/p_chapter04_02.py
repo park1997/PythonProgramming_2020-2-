@@ -9,5 +9,14 @@
 # Tuple Advanced
 # Unpacking
 
-b ,a = a, b
 print(divmod(100,9))
+print(*divmod(100,9))
+print(divmod(*(100,9)))
+
+print()
+
+x, y, *rest = range(10)
+print(x,y,rest)
+
+x,y,*rest = 1,2,3,4,5,6
+print(x,y,rest)
