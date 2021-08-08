@@ -20,3 +20,25 @@ print(x,y,rest)
 
 x,y,*rest = 1,2,3,4,5,6
 print(x,y,rest)
+
+# Mutable(가변) vs Immutable(가변)
+
+l = (15,20,25)
+m = [15,20,25]
+
+print(l,id(l))
+print(m,id(m))
+
+print()
+l*=2    # 튜플은 아이디 값이 바뀜
+m*=2    # 리스트는 아이디 값이 안바뀜
+
+print(l,id(l)) 
+print(m,id(m))
+
+print()
+print()
+
+# sort vs sorted
+# reverse, key = len, key = str.Lower, key=func
+
