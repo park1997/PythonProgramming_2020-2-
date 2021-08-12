@@ -42,3 +42,6 @@ print()
 # sort vs sorted
 # reverse, key = len, key = str.Lower, key=func
 
+# sorted : 정렬 후 새로운 객체 반환
+# sort : 정렬 후 객체 직접 변경
+
