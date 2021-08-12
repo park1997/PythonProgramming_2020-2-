@@ -17,7 +17,7 @@ car_datail_3=[{"color":"Silver"},{"horsepower":300},{"price":6000}]
 
 # list Struc
 # 관리하기가 불편
-# 인덱스로 접근해야함(실수 유발 ), 삭제가 불편함
+# 인덱스로 접근해야함(실수 유발), 삭제가 불편함
 car_company_list = ["Ferarri","Bmw","Audi"]
 car_detail_list = [{"color":"White","horsepower":400,"price":8000},{"color":"Black","horsepower":270,"price":5000},{"color":"Silver","horsepower":300,"price":6000}]
 
@@ -53,7 +53,7 @@ class Car():
     def __reduce__(self):
         pass
 
-    
+
 car1 = Car('Ferrari',{'color':'White',"horsepower":400,"price":8000})
 car2 = Car('Bmw',{'color':'Black',"horsepower":270,"price":5000})
 car3 = Car('Audi',{'color':'Silver',"horsepower":300,"price":6000})
