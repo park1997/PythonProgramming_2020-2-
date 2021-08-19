@@ -16,5 +16,5 @@ while 1:
     num+=1  
     print(arr)
     time.sleep(1)
-    if num >40:
-        break
+    # if num >40:
+    #     break
